@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	
+	<appender name="fileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>src/main/resources/logs/tjoeun_log.log</file>
+		<encoder>
+			<pattern>
+				
+				<!-- 로그가 찍히는 이런 패턴을 바꿔줄 수 있다
+				%-5의 뜻은 왼쪽 정렬인데 총 5자리를 부여하는데 5자리보다 작을경우 공백을 오른쪽에 채운다는 뜻
+				%n의 뜻은 엔터
+				 -->
+				 %d{yyyy-MM-dd HH:mm:ss} [%thread] [%-5level] %logger{35} - %msg%n
+			</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- 로그를 찍은 파일의 이름 패턴을 정해주는 fileNamePattern 과 해당 파일을 얼마나 가지고 있을지 파일의 유효기간을 정해주는 maxHistory -->
+			<fileNamePattern>
+				src/main/resources/logs/tjoeun_%d{yyyy-MM-dd}.log
+			</fileNamePattern>		
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+	
+	<!-- ***주의사항*** -->
+	<!-- 여기에 로그 수준을 지정했으면 application.properties에서는 로그 수준을 지워줘야 함다. -->
+	<!-- 특정 패키지 수준의 로그 -->
+	<logger name="com.study.springboot" level="info" additivity="false">
+		<appender-ref ref="fileAppender"/>
+	</logger>
+	<!-- 루트 수준일때 아래처럼 -->
+	<root level="error">
+		<appender-ref ref="consoleAppender"/>
+	</root>
+	
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>
+				
+				<!-- 로그가 찍히는 이런 패턴을 바꿔줄 수 있다
+				%-5의 뜻은 왼쪽 정렬인데 총 5자리를 부여하는데 5자리보다 작을경우 공백을 오른쪽에 채운다는 뜻
+				%n의 뜻은 엔터 -->
+				
+				 %d{yy:MM:dd} %-5level  [%thread] %logger{35} : %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+</configuration>
+
+
