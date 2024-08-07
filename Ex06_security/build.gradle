@@ -13,6 +13,9 @@ java {
 		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
+eclipse.wtp.facet{
+	facet name : 'jst.web', version : '5.0'
+}
 
 configurations {
 	compileOnly {
@@ -23,24 +26,19 @@ configurations {
 repositories {
 	mavenCentral()
 }
-eclipse.wtp.facet{
-	facet name : 'jst.web', version : '5.0'
-}
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	//implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+	//runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
 	annotationProcessor 'org.projectlombok:lombok'
-	implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	
-	implementation 'jakarta.servlet:jakarta.servlet-api'
-	// jstl api 메이븐에서 jstl검색후 jstl아래 자카르타 api 들어가서 원하는 링크 복사
 	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api'
 	// jstl 링크 jakarta.servlet.jsp.jstl 검색후 물고기모양(이름 : Jakarta Standard Tag Library Implementation) 아이콘 들어가서 받음
 	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
@@ -48,9 +46,6 @@ dependencies {
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper'
 	// Tomcat el 오류가 너무 많이 나서 찾아보니 el을 안넣어줬었음 그래서 넣어줌
 	implementation 'org.apache.tomcat.embed:tomcat-embed-el'
-	// 오라클로 가는 데이터를 낚아채서 보여줌
-	implementation 'org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16'
-	
 }
 
 tasks.named('test') {
