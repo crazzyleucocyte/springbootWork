@@ -1,5 +1,6 @@
 package com.study.springboot.auth;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,12 +11,15 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import jakarta.servlet.DispatcherType;
 
 @Configuration
 public class WebSecurityConfig {
 	
+	@Autowired
+	AuthenticationFailureHandler authenticationFailureHandler;
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		//csrf는사이트간 이동을 할떄 누군가 값을 바꿔서 바꾼 값을 다른 사이트에 전달 할 수 있는데
@@ -37,7 +41,22 @@ public class WebSecurityConfig {
 						.anyRequest().authenticated()
 				);
 			//기본 페이지를 보여준다는 뜻
+			
+			
+			/*
 			http.formLogin((formLogin) -> formLogin.permitAll());
+			http.logout((logout) -> logout.permitAll());
+			*/
+			http.formLogin((formLogin) -> formLogin
+					.loginPage("/loginForm")			//로그인을 할 수 있는 페이지의 주소 default(/login)
+					.loginProcessingUrl("/login_check") //로그인폼의 action값을 넣음
+					//.failureUrl("/loginForm?error")			//로그인 에러시 이동할 페이지
+					.failureHandler(authenticationFailureHandler) 	//오류가 났을떄 Handler로 보내서 에러메시지를 로그인폼에 띄우도록했다.
+					.usernameParameter("username")		//아이디파라미터 default(j_username)
+					.passwordParameter("pwd") 			//비번파라미터 default(j_password)
+					.permitAll());
+
+			
 			http.logout((logout) -> logout.permitAll());
 		return http.build();
 	}
@@ -55,7 +74,7 @@ public class WebSecurityConfig {
 		UserDetails admin = User.builder()
 				.username("admin")
 				.password(passwordEncoder().encode("1234"))
-				.roles("ADMIN")
+				.roles("ADMIN","USER")
 				.build();
 				//만든 계정을 메모리에 넣겠다는 뜻
 		return new InMemoryUserDetailsManager(user,admin);

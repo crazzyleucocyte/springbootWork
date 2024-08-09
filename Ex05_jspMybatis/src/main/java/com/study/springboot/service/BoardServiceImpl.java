@@ -42,4 +42,10 @@ public class BoardServiceImpl implements BoardService {
 		return boardDao.insertBoard(map);
 	}
 
+	@Override
+	public int insertBoard(Board b) {
+		// TODO Auto-generated method stub
+		return boardDao.insertBoard(b);
+	}
+
 }

@@ -1,14 +1,13 @@
 package com.study.springboot.controller;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -119,7 +118,66 @@ public class BoardController {
 	public String writerForm() {
 		return"writeForm";
 	}
-
+	
+	/*
+	 * 넘어온 값이 많아 객체로 받는 방식
+	 * 	- 커맨드 객체 방식
+	 	  : 객체로 받을 떄 사용
+	 	    요청시 전달할 키(name속성의 값)을 객체에 담고자하는 필드명으로 작성
+		    스프링컨테이너가 해당 객체를 기본생성자로 생성 후 setter메소드를 호출하여 넣는다
+		
+		    폼에 있는 input의 name과 bean파일의 변수명과 같아야한다.
+		    그러면 스프링컨테이너가 폼에있는 name을 인식하여 bean파일에 다 setter로 넣어서 하나 만들어준다
+			얘는 굳이 폼형식이 아니여도 넘어오는 키값과 bean파일의 변수명이 같으면 자동으로 넣어주는듯
+		  ex)
+		  @RequestMapping("/write")
+		  public String write(Board b){
+		  	String title=b.getTitle();
+		  }
+		  
+		- @ModelAttribute 어노테이션을 이용하는 방법
+	 	  : 객체로 받을 떄 사용
+    	 ** 요청시 전달할 키(name속성의 값)을 객체에 담고자하는 필드명으로 작성
+		 
+		  ex)
+		  @RequestMapping("/write")
+		  public String write(@ModelAttribute("form") Board b){
+		  	String title = b.getTitle();
+		  }
+	*/
+	/*	@RequestMapping("/write")
+		public String write(Board b){
+			String title=b.getTitle();
+			System.out.println("b.getTitle()"+title);
+			System.out.println("b.getContent()"+b.getContent());
+			System.out.println("b.getWriter()"+b.getWriter());
+			return "redirect:list";
+		}*/
+	//아래처럼 하면 얘가 form을 인식해서 input name과 bean의 변수이름이 같은것끼리 메칭해서 bean에 넣어준다.
+	@RequestMapping("/write")
+	public String write(@ModelAttribute("form") Board b){
+		String title=b.getTitle();
+		System.out.println("b.getTitle()"+title);
+		System.out.println("b.getContent()"+b.getContent());
+		System.out.println("b.getWriter()"+b.getWriter());
+		
+		int result =boardService.insertBoard(b);
+		System.out.println(result);
+		if(result==1) {
+			
+			return "redirect:list";
+		}else {
+			LOGGER.warn("insert 실패");
+			return "writerForm";
+		}
+	}
+	/*@RequestMapping("/write")
+	public String write(@ModelAttribute("form") Board b){
+		String title = b.getTitle();
+		return "redirect:list";
+	}*/
+	
+	/*
 	@RequestMapping("/write")
 	public String write(HttpServletRequest request) {
 		String title=request.getParameter("title");
@@ -141,6 +199,7 @@ public class BoardController {
 		}
 		
 	}
+	*/
 }
 
 
