@@ -31,7 +31,8 @@ public class MemberController {
 	}
 	
 	@RequestMapping("/mupdate")
-	public String mupdate(String id, String name, String chPWD, String checkPWD, Model model) {
+	public String mupdate(String id, String name, String chPWD, 
+						  String checkPWD, Model model) {
 		
 		Optional<Member> rMember = memberService.selectById(id);
 		if(!rMember.isPresent()) {

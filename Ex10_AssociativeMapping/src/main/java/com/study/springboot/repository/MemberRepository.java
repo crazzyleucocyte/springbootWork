@@ -8,6 +8,6 @@ import com.study.springboot.domain.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member, String> {
 
-	Member save(Member m);
+	//Member save(Member m);
 
 }
