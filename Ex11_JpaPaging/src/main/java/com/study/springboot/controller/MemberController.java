@@ -45,16 +45,18 @@ public class MemberController {
 			
 		   * PageRequest 클래스
 		     : Spring Data JPA에서 제공하는 Pageable 구현체 중 하나로 페이지 정보를 생성하는 클래스
+		     아래는 다 변수다
 		     - page : 조회할 페이지 번호(0부터 시작)
 		     - size : 한 페이지당 항목수
 		     - sort : 정렬 정보(생략가능)
-		     - direction : 정렬 방향(ASC, DESC)
+		     sort를 썼으면 아래 두개는 안써도 된다.
+		     - direction : 정렬 방향(ASC, DESC)   ex)Sort.by("name").ascending()
 		     - properties : 정렬 대상 속성명
 		     
 		   > 생성자
 		   	 PageRequest(int page, int size)
 		   	 PageRequest(int page, int size, Sort sort)
-		   	 PageRequest(int page, int size, Sort.Direction direction, String... properties)
+		   	 PageRequest(int page, int size, Sort.Direction direction(내림차순 오름차숨), String... properties)
 			
 		*/
 		
@@ -62,8 +64,9 @@ public class MemberController {
 		Pageable pr = PageRequest.of(page-1, 10, sort);
 //		Pageable pr = PageRequest.of(page-1, 10, Sort.by("name").ascending());
 //		Pageable pr = PageRequest.of(page-1, 10, Sort.by("name").descending());
+		
 		/*Pageable pr = PageRequest.ofSize(10)
-								 .withPage(page-1)
+								 .withPage(page-1)	//(넘어온값-1)
 								 .withSort(sort);*/
 		
 		Page<Member> result=memberService.selectByNameLike(search, pr);
@@ -71,8 +74,8 @@ public class MemberController {
 		Long totalRecord = result.getTotalElements();			//총 레코드 수
 		int totalPage = result.getTotalPages();					//총 페이지수
 		int size = result.getSize();							//페이지당 레코드 수
-		int nowPage = result.getNumber();						//현재 페이지(0부터 시작)
-		int numberOfElements = result.getNumberOfElements();	//현재 페이지의 항목 
+		int nowPage = result.getNumber()+1;						//현재 페이지(0부터 시작)
+		int numberOfElements = result.getNumberOfElements();	//현재 페이지의 항목 맨 마지막 페이지는 페이지당 레코드수와 다르다
 		
 		model.addAttribute("members", content);
 		model.addAttribute("totalRecord", totalRecord);

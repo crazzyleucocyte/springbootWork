@@ -25,7 +25,8 @@ public interface MemberRepository extends JpaRepository<Member,Long>{
 	 	: SQL문을 직접 덩의하여 사용하는 방식
 		
 	*/
-	//JPQL 쿼리 : from뒤에는 영속성에 있는 엔티티명(DB테이블이 아님. 영속성 테이블명은 반드시 대문자로
+	//JPQL 쿼리 : from뒤에는 영속성에 있는 엔티티명(DB테이블이 아님. 영속성 테이블명은 반드시 대문자로)
+	//				:name가 넘어온 값을 받는 곳
 	@Query("select j  from JPAPAGING j where j.name like :name order by j.name desc")
 	//"select j.id, j,name, j  from JPAPAGING j where m.name like :name order by j.id desc"
 	//여기에서 항상 테이블명에 별칭을 붙여서 사용해야하고 where절에서 :뒤에 쓰는 변수명은 매개변수가 아닌 파라미터로 받는 값을 써줘야 한다. 

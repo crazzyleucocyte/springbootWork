@@ -13,7 +13,7 @@
 	총게시글의 갯수 : ${totalRecord}<br>
 	총 페이지 수 : ${totalPages }<br>
 	한 페이지당 항목 수 : ${size }<br>
-	현재 페이지 : ${nowPage}<br>
+	현재 페이지 : ${nowPage+1}<br>
 	현재 페이지의 항목 수 : ${numberOfElements }<br>
 	<table width="800px">
 		<tr>
