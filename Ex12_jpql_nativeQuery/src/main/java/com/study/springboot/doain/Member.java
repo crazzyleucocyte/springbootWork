@@ -24,10 +24,10 @@ import lombok.Setter;
 public class Member {
 	@Id								//primary key로 지정하겠다는 뜻
 	@SequenceGenerator(
-			name="PAGINGSEQ",
-			sequenceName="JPAPAGING_SEQ",
-			initialValue=1,
-			allocationSize=1
+			name="PAGINGSEQ",					//@generatedValue(generator="")에 있는 이름과 동일해야함
+			sequenceName="JPAPAGING_SEQ",		//오라클에 들어갈 시퀀스 이름
+			initialValue=1,						//첫 항
+			allocationSize=1					//등차
 			)
 	@GeneratedValue(generator="PAGINGSEQ")					//시퀀스를 만들겠다는 뜻, 시퀀스이름은 테이블명_seq
 	private Long id;

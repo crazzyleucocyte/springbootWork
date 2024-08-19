@@ -19,8 +19,9 @@ public class BoardController {
 	
 	@RequestMapping("/binsert")
 	public String bInsert(Board board, Model model) {
+		//member 객체를 생성하여 setMember를 하면 알아서 지정한 writer만 insert한다
 		Member m = new Member();	
-		m.setId("user02");			//세션에서 id를 가져왔다
+		m.setId("user02");			//세션에서 id를 가져왔다치고
 		
 		board.setMember(m);
 		

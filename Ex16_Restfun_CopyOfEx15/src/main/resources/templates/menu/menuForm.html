@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="css/index.css" rel="stylesheet">
+<script src="webjars/jquery/3.7.1/jquery.min.js"></script>
+<link href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<!--
+		GET /menu : 전체 메뉴 조회
+		GET /menu/type/kr : 한식만 조회
+		GET /menu/type/ch : 중식만 조회
+		GET /menu/type/jp : 일식만 조회
+		
+		GET /menu/taste/mild : 순한맛만 조회
+		GET /menu/taste/normal : 기본맛만 조회
+		GET /menu/taste/hot : 매운맛만 조회
+		
+		GET /menu/10 : 10번 메뉴 조회
+		
+		POST /menu : 메뉴 한건 등록
+		
+		PUT /menu : 메뉴 한건 전체 수정
+		PATCH /menu : 메뉴 한건 일부 수정
+		
+		DELETE /menu/10 : 메뉴 한건 삭제
+		
+		
+		
+		
+	-->
+	
+	<div th:replace="~{/fragments/header.html :: fragment-menu}"></div>
+	<h1 align="center">MENU RESTful API</h1>
+	
+	<div width="700px" align="center">
+		<!--
+		GET /menu : 전체 메뉴 조회
+		-->
+		<div class="menu-test">
+			<h3>전체 메뉴 조회</h3>
+			<button type="button" id="menuAllList" class="btn btn-outline-primary">조회</button><br><br>
+			
+		</div>
+		<div id="menu-result"></div>
+		
+		<hr>		
+	<script>
+		$(()=>{
+			$("#menuAllList").click(function(){
+				$.ajax({
+					url : '/menu',
+					method : 'GET',
+					success  (result) {
+						menuTable("#menu-result",result)
+					},
+					error :	console.log
+					
+				})
+			})
+		})
+	</script>
+	</div>
+	<script>
+<!--		selector=넣어줄 곳 data는 넣을 값-->
+		const menuTable=(selector, data) => {
+			const container = document.querySelector(selector);
+			let value = `<table id="list-area" align="center" class="table table-striped" style="width:800px">
+							<thead>
+								<tr>
+									<th width="10%">번호</th>
+									<th width="20%">메뉴명</th>
+									<th width="20%">가격</th>
+									<th width="20%">음식점명</th>
+									<th width="20%">맛</th>
+									<th width="10%">종류</th>
+								</tr>
+							</thead>
+							<tbody>
+						`;
+			//data 반복 처리
+			data.forEach(item=>{
+				value+=`<tr>
+							<td>${item.id}</td>
+							<td>${item.name}</td>
+							<td>${item.price}</td>
+							<td>${item.restaurant}</td>
+							<td>${item.taste}</td>
+							<td>${item.type}</td>
+						</tr>`;
+			})
+			value+="</tbody>  </table>";
+			container.innerHTML=value;
+		}
+	</script>	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+</body>
+</html>
