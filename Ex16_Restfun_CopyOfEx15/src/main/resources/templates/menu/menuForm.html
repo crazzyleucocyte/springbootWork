@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<link href="css/index.css" rel="stylesheet">
-<script src="webjars/jquery/3.7.1/jquery.min.js"></script>
-<link href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
-<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<link href="css/index.css" rel="stylesheet">
+	<script src="webjars/jquery/3.7.1/jquery.min.js"></script>
+	<link href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+	<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
 </head>
+
 <body>
 	<!--
 		GET /menu : 전체 메뉴 조회
@@ -32,10 +34,10 @@
 		
 		
 	-->
-	
+
 	<div th:replace="~{/fragments/header.html :: fragment-menu}"></div>
 	<h1 align="center">MENU RESTful API</h1>
-	
+
 	<div width="700px" align="center">
 		<!--
 		GET /menu : 전체 메뉴 조회
@@ -43,75 +45,448 @@
 		<div class="menu-test">
 			<h3>전체 메뉴 조회</h3>
 			<button type="button" id="menuAllList" class="btn btn-outline-primary">조회</button><br><br>
-			
+
 		</div>
 		<div id="menu-result"></div>
-		
-		<hr>		
-	<script>
-		$(()=>{
-			$("#menuAllList").click(function(){
-				$.ajax({
-					url : '/menu',
-					method : 'GET',
-					success  (result) {
-						menuTable("#menu-result",result)
-					},
-					error :	console.log
+
+		<hr>
+
+		<script>
+			$(() => {
+				$("#menuAllList").click(function () {
+					$.ajax({
+						url: '/menu',
+						method: 'GET',
+						success(result) {
+							menuTable("#menu-result", result)
+						},
+						error: console.log
+
+					})
+				})
+			})
+		</script>
+
+		<!--GET /menu/type/kr : 한식만 조회
+		GET /menu/type/ch : 중식만 조회
+		GET /menu/type/jp : 일식만 조회-->
+
+		<div class="menu-test">
+			<h3>메뉴 타입별 조회</h3>
+			<select id="typeSelector">
+				<option value="" disabled selected>타입 선택</option>
+				<option value="KR">한식</option>
+				<option value="CH">중식</option>
+				<option value="JP">일식</option>
+			</select>
+		</div>
+		<br>
+		<div class="result" id="menuType-result"></div>
+
+		<hr>
+		<script>
+			$(() => {
+				$("#typeSelector").on('change', e => {
+					console.log(e.target.value);
+					$.ajax({
+						url: `/menu/type/${e.target.value}`,
+						method: "GET",
+						success(result) {
+							console.log(typeof result)
+							menuTable("#menuType-result", result)
+						},
+						error() {
+							console.log("menyTypeSelect 실패")
+						}
+					})
+				})
+			})
+		</script>
+		<!-- 3. Get / menu/type/KR/tast/MILD-->
+
+		<div class="menu-test">
+			<h3>메뉴 타입과 맛별 조회</h3>
+			<form id="menuTypeTasteForm">
+				<div class="menuRadio">
+					<input type="radio" name="type" value="KR">한식
+					<input type="radio" name="type" value="CH">중식
+					<input type="radio" name="type" value="JP">일식
+				</div>
+				&emsp;&emsp;|&emsp;&emsp;
+				<div class="menuRadio">
+					<input type="radio" name="taste" value="MILD">순한맛
+					<input type="radio" name="taste" value="NORMAL">기본맛
+					<input type="radio" name="taste" value="HOT">매운맛
+				</div>
+				<button class="btn btn-outline-primary">조회</button>
+			</form>
+		</div>
+		<br>
+		<div class="result" id="menuTypeTaste-result"></div>
+
+
+		<script>
+			$(() => {
+				$("#menuTypeTasteForm").on('submit', e => {
+					e.preventDefault();
+					const taste = e.target.taste.value;
+					const type = e.target.type.value;
+					$.ajax({
+						url: `/menu/type/${type}/taste/${taste}`,
+						method: "GET",
+						success(result) {
+							console.log(result)
+							menuTable("#menuTypeTaste-result", result);
+						},
+						error() {
+							console.log("실패")
+						}
+					})
+				})
+			})
+		</script>
+
+		<!-- 4 Post /menu -->
+		<div class="menu-test">
+			<form id="menuEnrollFrm" class="menuEnrollFrm">
+				음식 이름 : <input name="name" class="form-control" required><br>
+				가격 : <input name="price" required class="form-control"><br>
+				식당 : <input name="restaurant" required class="form-control"><br>
+				타입
+				<div class="menuRadio">
+					<input type="radio" class="form-check-input" name="type" id="KR" value="KR">
+					<label class="form-check-label" for="KR">
+						한식
+					</label>
+					<input type="radio" class="form-check-input" name="type" id="CH" value="CH">
+					<label class="form-check-label" for="CH">
+						중식
+					</label>
+					<input type="radio" class="form-check-input" name="type" id="JP" value="JP">
+					<label class="form-check-label" for="JP">
+						일식
+					</label>
+				</div>
+				&emsp;&emsp;|&emsp;&emsp;
+				맛
+				<div class="menuRadio">
+					<input type="radio" class="form-check-input" name="taste" id="MILD" value="MILD">
+					<label class="form-check-label" for="MILD">
+						순한맛
+					</label>
+					<input type="radio" class="form-check-input" name="taste" id="NORMAL" value="NORMAL">
+					<label class="form-check-label" for="NORMAL">
+						기본맛
+					</label>
+					<input type="radio" class="form-check-input" name="taste" id="HOT" value="HOT">
+					<label class="form-check-label" for="HOT">
+						매운맛
+					</label>
+				</div>
+				<button class="btn btn-outline-primary">제출</button><br>
+				<hr><br>
+			</form>
+		</div>
+
+
+
+
+		<script>
+			$(() => {
+				$("#menuEnrollFrm").on('submit', e => {
+					e.preventDefault();
+					const menu = {
+						restaurant: e.target.restaurant.value,
+						name: e.target.name.value,
+						price: e.target.price.value,
+						type: e.target.type.value,
+						taste: e.target.taste.value,
+					};
+					$.ajax({
+						url: `/menu`,
+						method: "POST",
+						contentType: "application/json; charset=utf-8",
+						data: JSON.stringify(menu),
+						success(result, textStatus, jqXHR) {
+							console.log("result : " + result)
+							console.log("textStatus : " + textStatus)
+							console.log("location : ", jqXHR.getResponseHeader('location'))
+							/* jqXHR.getAllResponseHeaders('location') 는 controller에서 보내준 url을 뽑아내는 코드 결과값은 /menu/51 이다.*/
+							if (jqXHR.status == 201) {
+								alert("메뉴가 등록 되었습니다.")
+							}
+
+						},
+						/*		success에서의 순서
+								success(result, textStatus, jqXHR) {
+							*/
+						/*	error에서의 순서
+							error(jqXHR, testStatus, errorMsg) {
+							*/
+						error: console.log,
+						complete() {
+							e.target.reset();
+						}
+
+					})
+				})
+			})
+		</script>
+		<!-- 5. PUT /menu -->
+		<div class="menu-test" style="width: 800px;" align="center">
+			<h3 align="center">메뉴 수정하기</h3>
+			<p>메뉴번호 검사 후 수정</p>
+
+			<form name="menuSearchFrm" id="menuSearchFrm" align="center">
+				메뉴번호 : <input name="id"><br><br>
+				<button class="btn btn-outline-primary">검색</button>
+			</form>
+
+			<form id="menuUpdateFrm" name="menuUpdateFrm" class="menuUpdateFrm" align="center">
+				음식 이름 : <input name="name" class="form-control" required><br>
+				가격 : <input name="price" required class="form-control"><br>
+				식당 : <input name="restaurant" required class="form-control"><br>
+				타입
+				<div class="menuRadio" align="center">
+
+					<input type="radio" class="form-check-input" name="type" id="KR" value="KR">
+					<label class="form-check-label" for="KR"> 한식 </label>
+
+					<input type="radio" class="form-check-input" name="type" id="CH" value="CH">
+					<label class="form-check-label" for="CH"> 중식 </label>
+
+					<input type="radio" class="form-check-input" name="type" id="JP" value="JP">
+					<label class="form-check-label" for="JP"> 일식 </label>
+
+				</div>
+				&emsp;&emsp;|&emsp;&emsp;
+				맛
+				<div class="menuRadio" align="center">
+
+					<input type="radio" class="form-check-input" name="taste" id="MILD" value="MILD">
+					<label class="form-check-label" for="MILD"> 순한맛 </label>
+
+					<input type="radio" class="form-check-input" name="taste" id="NORMAL" value="NORMAL">
+					<label class="form-check-label" for="NORMAL"> 기본맛 </label>
+
+					<input type="radio" class="form-check-input" name="taste" id="HOT" value="HOT">
+					<label class="form-check-label" for="HOT"> 매운맛 </label>
+
+				</div>
+				<button class="btn btn-outline-primary">수정</button>
+				<input type="hidden" name="id" value="">
+			</form>
+		</div>
+		<hr>
+		<script>
+			$(() => {
+				$("#menuSearchFrm").on("submit", e => {
+					e.preventDefault();
+					findById(e.target.id.value);
+				})
+
+				$("#menuUpdateFrm").on("submit", e => {
+					e.preventDefault();
+					/* new FormData : 폼 안에 있는 값들을 객체로만들어서 그 객체 안에 넣어주는 애 */
+					const frmData = new FormData(e.target);
+					const menu = {};
+					frmData.forEach((value, key) => {
+						menu[key] = value;
+					});
+					console.log(JSON.stringify(menu));
+
+					$.ajax({
+						url: '/menu',
+						data: JSON.stringify(menu),
+						method: "PUT",
+						contentType: "application/json; charset=utf-8",
+						success(result) {
+							console.log(result)
+							// http상태코드가 ok일떄
+							if (result !== null) {
+								alert("수정되었습니다.");
+							}
+						},
+						error: console.log,
+						complete: e.target.reset()
+					})
+
+
+				})
+			})
+
+
+		</script>
+		<!-- 6. DELETE /MENU/? -->
+		<div class="menu-test">
+			<h3>메뉴 삭제하기</h3>
+			<p>메뉴번호로 삭제</p>
+			<form name="menuDeleteFrm" id="menuDeleteFrm">
+				메뉴번호 : <input name="id"><br><br>
+				<button cladd="btn btn-outline-danger">삭제</button>
+			</form>
+		</div>
+		<script>
+			$(()=>{
+				$("#menuDeleteFrm").on('submit',e=>{
+					e.preventDefault();
+					let id= e.target.id.value;
+					$.ajax({
+						url : `/menu/${id}`,
+						method : "GET",
+						success (result){
+							console.log(result);
+							if(result != null){
+								deleteMenu(id);
+							}
+						},
+						error (jqXHR){
+							console.log("jqXHR.status", jqXHR.status)
+							if(jqXHR.status == 404){
+								alert("조회한 메뉴가 존재하지 않습니다.")
+							}
+						} 
+					})
 					
 				})
 			})
-		})
-	</script>
+			
+			const deleteMenu = id=>{
+				$.ajax({
+					url : `/menu/${id}`,
+					method : "DELETE",
+					success(result){
+						console.log(result);
+					},
+					error : console.log,
+					conplete(jqXHR){
+							console.log("jqXHR.status", jqXHR.status)					
+						if(jqXHR.status==204)
+							alert("삭제가 완료되었습니다.")
+						}
+				})
+			}
+		</script>
+
 	</div>
+
+
+
+
+
+
+
+
+
+
 	<script>
-<!--		selector=넣어줄 곳 data는 넣을 값-->
-		const menuTable=(selector, data) => {
+		<!--		selector=넣어줄 곳 data는 넣을 값-->
+		const menuTable = (selector, data) => {
 			const container = document.querySelector(selector);
 			let value = `<table id="list-area" align="center" class="table table-striped" style="width:800px">
-							<thead>
-								<tr>
-									<th width="10%">번호</th>
-									<th width="20%">메뉴명</th>
-									<th width="20%">가격</th>
-									<th width="20%">음식점명</th>
-									<th width="20%">맛</th>
-									<th width="10%">종류</th>
-								</tr>
-							</thead>
-							<tbody>
-						`;
+		<thead>
+			<tr>
+				<th width="10%">번호</th>
+				<th width="20%">메뉴명</th>
+				<th width="20%">가격</th>
+				<th width="20%">음식점명</th>
+				<th width="20%">맛</th>
+				<th width="10%">종류</th>
+			</tr>
+		</thead>
+		<tbody>
+			`;
 			//data 반복 처리
-			data.forEach(item=>{
-				value+=`<tr>
-							<td>${item.id}</td>
-							<td>${item.name}</td>
-							<td>${item.price}</td>
-							<td>${item.restaurant}</td>
-							<td>${item.taste}</td>
-							<td>${item.type}</td>
-						</tr>`;
-			})
-			value+="</tbody>  </table>";
-			container.innerHTML=value;
+			if (data.length > 0) {
+
+				data.forEach(item => {
+					value += `<tr>
+				<td><a href="javascript:findById(${item.id})">${item.id}</a></td>
+				<td>${item.name}</td>
+				<td>${item.price}</td>
+				<td>${item.restaurant}</td>
+				<td>${item.taste}</td>
+				<td>${item.type}</td>
+			</tr>`;
+				})
+			} else {
+				value += `<tr>
+				<td colspan="6" class="menu-test">조회된 결과가 없습니다.</td>
+			</tr>`;
+			}
+			value += `</tbody>
+	</table> `;
+			container.innerHTML = value;
 		}
-	</script>	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+		const findById = id => {
+			$.ajax({
+				url: `/menu/${id}`,
+				method: 'GET',
+				success(result) {
+					console.log("result", result);
+					const frm = document.menuUpdateFrm;
+					const {id, name, price, restaurant, type, taste} = result;
+					//사용자가 입력한 id로 검색해서 menu를 반환 후 해당 변수들을 분해해서 menuUpdateFrm의 각 input에 넣었다.
+					frm.restaurant.value = restaurant;
+					frm.id.value = id;
+					frm.name.value = name;
+					frm.price.value = price;
+					frm.type.value = type;
+					frm.taste.value = taste;
+
+				},
+				error(jqXHR, testStatus, errorMsg) {
+					//jQuery에서 파라미터 jqXHR, testStatus, errorMsg 세가지를 제공
+
+					/*
+					- jqXHR 파라미터
+					비동기를 처리하는 주객체는 XMLHttpRequest
+					이것을 json으로 처리하는것이 첫번째 인자로 들어옴(jqXHR)
+					jqXHR.status : 500
+					jqXHR.statusText : "error" //여기는 다 똑같이 error로 나온다.
+					jqXHR.responseText : url의full response
+					*/
+					console.log(`jqXHR : ${jqXHR}`);
+					console.log(`jqXHR.status : ${jqXHR.status}`);
+					console.log(`jqXHR.statusText : ${jqXHR.statusText}`);
+					console.log(`testStatus : ${testStatus}`)
+					console.log(`errorMsg : ${jqXHR.errorMsg}`);
+
+					/*jqXHR : [object Object]
+					menuForm:257 jqXHR.status : 404
+					menuForm:258 jqXHR.statusText : error
+					menuForm:259 testStatus : error
+					menuForm:260 errorMsg : undefined*/
+
+					if (jqXHR.status == 404) {
+						alert("조회한 메뉴는 없습니다.");
+					}
+
+				}
+			})
+		}
+	</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
+
 </html>

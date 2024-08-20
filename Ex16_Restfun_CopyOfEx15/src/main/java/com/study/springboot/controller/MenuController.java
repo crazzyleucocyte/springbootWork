@@ -12,4 +12,6 @@ public class MenuController {
 	public String menuForm() {
 		return"menu/menuForm";
 	}
+	
+	
 }
