@@ -69,7 +69,7 @@ public class BoardController {
 	
 	@GetMapping("/insertForm")
 	public String insertForm(Model m) {
-		m.addAttribute("title", "하 츄 핑");
+		m.addAttribute("title", "글 쓰 기");
 		m.addAttribute("action", "insert");
 		return "board/insertForm";
 	}

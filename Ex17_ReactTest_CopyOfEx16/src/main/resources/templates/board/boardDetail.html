@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<link href="css/index.css" rel="stylesheet">
+<style>
+    tr{
+        text-align: center;
+    }
+	
+</style>
+</head>
+<body>
+	<div th:replace="~{/fragments/header :: fragment-menu}"></div>
+	<h1 align="center">게시글 상세보기</h1>
+	<div align="center" >
+		<table class="table table-striped" style="width:800px">
+			<tr>
+				<th width="33%">글번호</th>
+				<th width="33%">제목</th>
+				<th width="33%">작성자</th>
+			</tr>
+			<tr>
+				<td id="bno" th:text="${board.bno}"></td>
+				<td th:text="${board.title}"></td>
+				<td id="writer" th:text="${board.writer}"></td>
+			</tr>
+			<tr>
+				<th width="33%">등록일</th>
+				<th width="33%">조회수</th>
+				<th width="33%"></th>
+			</tr>
+			<tr>
+				<td th:text="${#temporals.format(board.createDate,'yy-MM-dd')}"></td>
+				<td th:text="${board.count}"></td>
+				<td></td>
+			</tr>
+			<tr>
+				<th colspan="3">내용</th>
+			</tr>
+			<tr>
+				<td colspan="3" th:text="${board.content}"></td>
+			</tr>
+		</table>
+		<span>
+			<button type="button" class="btn btn-outline-secondary" onclick="location.href='list?nowPage=0'">리스트</button>
+			<button type="button" class="btn btn-outline-secondary" 
+			th:onclick="|location.href='@{updateBoard(bno=${board.bno})}'|" id="updateBoard">수정</button>
+			<button type="button" id="deleteBoard" class="btn btn-outline-danger"  >삭제</button>
+		</span>
+	</div>
+	<br><hr><br>
+	<div id="replyInsertDiv" align="center" >
+			<table>
+				<tr>
+					<th width="100">댓글작성</th>
+					<th width="400">
+						<textarea cols="53" rows="3" class="form-control" name="content" id="content"></textarea>
+					</th>
+					<th width="100">
+						<button id="replyInsert" type="button" class="btn btn-outline-primary">등록</button> 
+					</th>
+				</tr>
+			</table>
+	</div>
+	<div id="ReplyList" align="center">
+		<table class="table table-striped" style="width:800px">
+			<thead>
+				<tr>
+					<th>No.</th>
+					<th>작성자</th>
+					<th>내용</th>
+					<th>작성 날짜</th>
+				</tr>
+			</thead>
+			<tbody id="replyList">
+
+			</tbody>
+			
+		</table>
+	</div>
+	<br><br>
+	
+<script>
+	$("#deleteBoard").click(function(){
+		if(window.confirm("정말 삭제하시겠습니까?")){
+			location.href='deleteBoard?bno='+$('#bno').text();
+		}
+	})
+	$(()=>{
+		$.ajax({
+			url : "memberAuthorize",
+			data:{
+				writer : $("#writer").text()
+			},
+			success : function(result){
+				console.log("result : "+result);
+				console.log("typeof result : "+typeof result);
+				if(result == -1){
+					console.log(-1);
+					$("#updateBoard").hide();
+					$("#deleteBoard").hide();
+				}else if (result==0){
+					console.log(0);
+					$("#updateBoard").show();
+					$("#deleteBoard").show();
+				}
+			},
+			error : function(){
+				console.log("실패");
+			}
+		})
+	})
+	$("#replyInsert").click(function(){
+		
+		$.ajax({
+			url : "replyInsert",
+			data : {
+				refBno : $("#bno").text(),
+				content : $("#content").val()
+			},
+			success : function(result){
+				if(result[0].content =="loginRequired"){
+					
+					window.alert("로그인을 해주세요");
+				}else{
+					let $html="";
+					$.each(result,function(i,r){
+						$html+="<tr>"
+								+"	<td width='20%'>"+(i+1)+"</td>"
+								+"	<td style='font-size: 1.2em;'>"+r.writer+"</td>"
+								+"	<td >"+r.content+"</td>"
+								+"	<td>"+r.createDate+"</td>"
+								+"</tr>"
+					})
+						
+					
+					$("#replyList").html($html);
+					 $("#content").val("");
+					console.log(result)
+				}
+			},
+			error : function(){
+				console.log("에러")
+			}
+		})
+	})
+	$(()=>{
+		$.ajax({
+			url:"replyList",
+			data:{
+				refBno : $("#bno").text()
+			},
+			success : function(result){
+				console.log(result[0]);
+				
+					
+					console.log(result)
+					let $html="";
+					$.each(result,function(i,r){
+						$html+="<tr>"
+								+"	<td width='20%'>"+(i+1)+"</td>"
+								+"	<td style='font-size: 1.2em;'>"+r.writer+"</td>"
+								+"	<td >"+r.content+"</td>"
+								+"	<td>"+r.createDate+"</td>"
+								+"</tr>"
+					})
+					$("#replyList").html($html);
+				
+			},
+			error : function(){
+				console.log("에러")
+			}
+		})
+	})
+	
+	
+</script>
+</body>
+</html>

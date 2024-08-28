@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<link href="css/index.css" rel="stylesheet">
+
+<title>Insert title here</title>
+</head>
+<body>
+	<div align="center">
+		
+	<div th:replace="~{/fragments/header :: fragment-menu}"></div>
+	<h1 align="center" th:text="${title}"></h1>
+	<form th:action="@{${action}}" method="post">
+
+		<div>
+			<table>
+				
+				<tr>
+					<td>제목</td>
+					<td>
+						<span th:if="${title == '글 수정'}">
+							<input type="text" name="title" class="form-control" th:value="${board.title}">
+						</span>	
+						<span th:unless="${title == '글 수정'}">
+							<input type="text" class="form-control" name="title">
+						</span>	
+					</td>
+				</tr>
+				<tr>
+					<td>내용</td>
+					<td>
+						<span th:if="${title == '글 수정'}">
+							<textarea class="form-control" name="content" id="content" cols="50" rows="10" th:text="${board.content}"></textarea>
+						</span>	
+						<span th:unless="${title == '글 수정'}">
+							<textarea class="form-control" name="content" id="content" cols="50" rows="10"></textarea>
+						</span>	
+					</td>
+				</tr>
+				<tr >
+					<td colspan="2">
+						<button class="btn btn-outline-primary" >글쓰기</button>&emsp;
+						<button type="reset" class="btn btn-outline-secondary">다시쓰기</button>
+						
+					</td>
+				</tr>
+			</table>
+		</div>
+		<span th:if="${title == '글 수정'}">
+			<input type="hidden" name="update" th:value="${board.bno}">
+		</span>		
+		<input type="hidden" name="writer" th:value="${loginUser.id}">
+	</form>
+	</div>
+	
+</body>
+</html>

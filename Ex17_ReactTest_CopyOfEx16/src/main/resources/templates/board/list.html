@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+<script src="/webjars/bootstrap/5.3.3/js/bootstrap.min.js"></script>
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+
+<link href="css/index.css" rel="stylesheet">
+<style>
+    tr{
+        text-align: center;
+    }
+</style>
+
+</head>
+<body>
+    <div align="center">
+
+        <div th:replace="~{/fragments/header :: fragment-menu}"></div>
+        <h1 >게 시 판</h1>
+        <div th:text="|총 게시글의 수 : ${boardPage.totalElements}|"></div>
+        <table class="table table-hover">
+            <thead>
+                
+                <tr>
+                    <th width="11%">글번호</th>
+                    <th width="45%">제목</th>
+                    <th width="14%">작성자</th>
+                    <th width="12%">조회수</th>
+                    <th width="18%">작성일</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="board, state: ${boardPage}">
+                    <!--/*<td th:text="${board.bno}"></td>
+                    <td th:text="${state.count}"></td>*/-->
+                    <td th:text="${boardPage.totalElements - nowPage*boardPage.size-state.index}"></td>
+                    <td >
+						<a th:href="@{detailForm(bno=${board.bno})}" th:text="${board.title}"></a>
+					</td>
+                    <td th:text="${board.writer}"></td>
+                    <td th:text="${board.count}"></td>
+                    <td th:text="*{#temporals.format(board.createDate, 'yyyy-MM-dd')}"></td>
+                    <!-- *{board.createDate}의 의미는 지정해준 포맷으로 출력하겠다는 뜻-->
+                </tr>
+            </tbody>
+        </table>
+        <!--페이징 처리-->
+        <div align="center">
+			<a th:if="${nowPage > 0}" th:href="@{list(nowPage=${nowPage-1})}">[Prev...] </a>
+			<!--
+				thymeleaf에서는 #numbers라는 숫자 포맷 메소드를 지원
+				#numbers.sequence() 메소드 sequence(start, end, step)
+				그냥 nowPage부터 endPage로 할기에는 자료형이 String이라 int형으로 바꿔주는 애
+			-->
+			
+			<span th:each="pageNumber : ${#numbers.sequence(nowPage,endPage-1)}">
+				
+				<strong th:if="${pageNumber == nowPage}" th:text="|[${pageNumber+1}]|"></strong>
+				<a th:unless="${pageNumber == nowPage}" th:href="@{list(nowPage=${pageNumber})}"
+				   th:text="|[${pageNumber+1}]|"></a>  
+			</span>
+			
+			
+			<a th:if="${nowPage < boardPage.totalPages-1}" th:href="@{list(nowPage=${nowPage+1})}"> [...Next] </a>
+			
+		</div>
+    </div>
+    <div th:if="${loginUser!=null}" align="right">
+		<a href="insertForm">[글쓰기]</a>
+	</div>
+	
+	<div width="800" align="center">
+		<form action="list" method="get">
+			<table>
+				<tr>
+					<td>
+						<select class="form-select" name="keyField" id="keyField">
+							<option value="title">제목</option>
+							<option value="writer">작성자</option>
+							<option value="content">내용</option>
+						</select>
+					</td>
+					<td>
+						<input class="form-control" type="search" name="keyWord">
+					</td>
+					<td>
+		
+						<button type="submit" class="btn btn-outline-primary">검색</button>
+					</td>
+				</tr>
+		
+			</table>
+		</form>
+		</div>
+	
+	
+	
+	
+	
+    </body>
+</html>
